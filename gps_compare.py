@@ -20,12 +20,18 @@ cad.lcd.write("NMEA Monitor")
 time.sleep(2)
 cad.lcd.clear()
 
+
+btSerial = serial.Serial("/dev/rfcomm1", 4800, timeout= 0.5)
+
 try:
     serialPort = serial.Serial("/dev/ttyUSB0", 4800, timeout=0.5)
 except IOError:
     print "failed to open serial port, try sudo.\n"
+    exit(-1)
 
 while True:
-    str = serialPort.readline()
-    usbFile.write(str)
-    parseGPS(str)
+    usbStr = "U:" + serialPort.readline()
+    btStr = "B:" + btSerial.readline()
+    usbFile.write(usbStr)
+    usbFile.write(btStr)
+    parseGPS(btSerial.readline())
